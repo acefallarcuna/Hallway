@@ -12,7 +12,7 @@ type FfmpegInstance = {
 };
 
 type Settings = { wet: number; decay: number; room: number; preDelay: number };
-const defaults: Settings = { wet: 42, decay: 5.2, room: 82, preDelay: 24 };
+const defaults: Settings = { wet: 42, decay: 3.2, room: 82, preDelay: 24 };
 const MAX_BYTES = 450 * 1024 * 1024;
 
 function formatBytes(bytes: number) {
@@ -172,13 +172,13 @@ export default function Home() {
     <section className="intro"><div className="eyebrow">SPACIAL AUDIO · SIMPLE WORKFLOW</div><h1>Give your video<br/><em>room to echo.</em></h1><p>Add a rich, spacious hall reverb to your video's sound. Your files stay on this device.</p></section>
 
     <section className="panel source-panel">
-      <div className="section-heading"><span className="step">01</span><div><h2>Your video</h2><p>MP4 or MOV recommended</p></div></div>
+      <div className="section-heading"><span className="step">01</span><div><h2>Upload Video</h2><p>MP4 or MOV recommended</p></div></div>
       <input ref={fileInput} className="hidden-input" type="file" accept="video/*,.mp4,.mov,.m4v,.webm" onChange={selectFile}/>
       {file && previewUrl ? <div className="selected-video"><video ref={videoRef} src={previewUrl} controls playsInline preload="metadata"/><div className="file-row"><div className="file-icon">▶</div><div className="file-info"><strong>{file.name}</strong><span>{formatBytes(file.size)}</span></div><button className="text-button" onClick={() => fileInput.current?.click()} disabled={busy}>Change</button></div></div> : <button className="dropzone" onClick={() => fileInput.current?.click()} disabled={busy}><span className="upload-icon">↑</span><strong>Choose a video</strong><span>Browse Photos or Files on your iPhone</span><small>Up to 450 MB · Nothing uploads</small></button>}
     </section>
 
     <section className="panel effects-panel">
-      <div className="section-heading"><span className="step">02</span><div><h2>Hall reverb</h2><p>Shape the space around your sound</p></div><span className="preset">LARGE HALL</span></div>
+      <div className="section-heading"><span className="step">02</span><div><h2>Hall Reverb</h2><p>Shape the space around your sound</p></div><span className="preset">LARGE HALL</span></div>
       <div className="effect-visual"><div className="echo-rings"><span/><span/><span/><span/><span/></div><div className="visual-label"><span>HALL SIZE</span><strong>{settings.room}%</strong></div><div className="mini-wave"><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/></div></div>
       <Slider label="Reverb mix" value={settings.wet} min={0} max={100} suffix="%" hint="Dry" rightHint="Soaked" onChange={(v) => updateSetting('wet', v)}/>
       <Slider label="Decay time" value={settings.decay} min={1} max={8} step={0.1} suffix=" s" hint="Short tail" rightHint="Long tail" onChange={(v) => updateSetting('decay', v)}/>
@@ -189,11 +189,11 @@ export default function Home() {
     </section>
 
     <section className="panel export-panel">
-      <div className="section-heading"><span className="step">03</span><div><h2>Export video</h2><p>Keep the original video stream</p></div></div>
-      <div className="export-facts"><div><span className="fact-icon">◇</span><span><strong>Video unchanged</strong><small>No video re-encoding</small></span></div><div><span className="fact-icon">⌁</span><span><strong>New audio track</strong><small>AAC · 192 kbps</small></span></div></div>
+      <div className="section-heading"><span className="step">03</span><div><h2>Export Video</h2><p>Keep the original video stream</p></div></div>
+      <div className="export-facts"><div><span className="fact-icon">◇</span><span><strong>Video Unchanged</strong><small>No video re-encoding</small></span></div><div><span className="fact-icon">⌁</span><span><strong>New Audio Track</strong><small>AAC · 192 kbps</small></span></div></div>
       <div className="status-row"><span className={`status-dot ${busy ? 'working' : ''}`}/><span>{status}</span>{busy && <span className="percent">{progress}%</span>}</div>
       {busy && <div className="progress-track"><div style={{ width: `${progress}%` }}/></div>}
-      <button className="primary-button" onClick={exportVideo} disabled={!file || busy}>{busy ? <><span className="spinner"/> Processing on this device…</> : <><span>✦</span> Create reverb video <span className="button-arrow">↗</span></>}</button>
+      <button className="primary-button" onClick={exportVideo} disabled={!file || busy}>{busy ? <><span className="spinner"/> Processing on this device…</> : <><span>✦</span> Create Reverb Video</>}</button>
       {outputUrl && <div className="download-card"><div className="download-check">✓</div><div className="download-copy"><strong>Your video is ready</strong><span>{outputName}</span></div><a className="download-button" href={outputUrl} download={outputName}>Download</a><button className="share-button" onClick={async () => { const blob = await fetch(outputUrl).then(r => r.blob()); const resultFile = new File([blob], outputName, { type: 'video/mp4' }); if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [resultFile] }))) { try { await navigator.share({ files: [resultFile], title: outputName }); } catch { /* User cancelled share sheet. */ } } else { setError('Use Download, then open the file in Files and use Share → Save Video if available.'); } }}>Share / Save</button></div>}
       {error && <div className="error-box" role="alert">{error}</div>}
       <p className="privacy-note"><span>♧</span> Your video is processed locally. The export engine downloads once from a public CDN; your media is never sent to our server.</p>
