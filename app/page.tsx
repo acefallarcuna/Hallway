@@ -43,8 +43,7 @@ async function processAudio(input: Uint8Array, settings: Settings, onStatus: (s:
   const live = new AudioContextClass();
   try {
     onStatus('Decoding audio…');
-    const copy = new ArrayBuffer(input.byteLength);
-    new Uint8Array(copy).set(input);
+    const copy = new Uint8Array(input).buffer as ArrayBuffer;
     const decoded = await live.decodeAudioData(copy);
     const tail = Math.min(8, Math.max(1.5, settings.decay * 0.8));
     const offline = new OfflineAudioContext(2, Math.ceil((decoded.duration + tail) * decoded.sampleRate), decoded.sampleRate);
